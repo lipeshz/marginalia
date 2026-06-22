@@ -1,0 +1,61 @@
+datasource db {
+    provider = "postgresql"
+}
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "../src/generated/client"
+}
+
+model User {
+    id String @id @default(uuid())
+    name String
+    email String @unique
+    password String
+    biography String? @db.Text
+    favoriteBook String? @map("favorite_book")
+    createdAt DateTime @default(now()) @map("created_at")
+
+    userBooks UserBook[]
+
+    @@map("users")
+}
+
+model Book {
+    id String @id @default(uuid())
+    isbn String @unique
+    title String
+    author String
+    thumbnail String?
+    numberOfPages Int @map("number_of_pages")
+    createdAt DateTime @default(now()) @map("created_at")
+
+    userBooks UserBook[]
+}
+
+model UserBook {
+    id String @id @default(uuid())
+    userId String @map("user_id")
+    bookId String @map("book_id")
+    status ReadingStatus @default(TO_READ)
+    buyLink String?
+    readedPages Int @default(0)  @map("readed_pages")
+    personalRate Int? @map("personal_rate")
+    personalOpinion String? @map("personal_opinion") @db.Text
+    startDate DateTime? @map("start_date")
+    finishedDate DateTime? @map("finished_date")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    book Book @relation(fields: [bookId], references: [id], onDelete: Restrict)
+
+    @@unique([userId, bookId])
+    @@map("user_books")
+}
+
+enum ReadingStatus {
+    TO_READ
+    READING
+    COMPLETED
+    DROPPED
+}

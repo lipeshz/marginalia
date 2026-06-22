@@ -11,7 +11,8 @@ USER
 BOOK
     id (unique), 
     ISBN (unique), 
-    Title, Author, 
+    Title, 
+    Author, 
     thumbnail, 
     number of pages
 
