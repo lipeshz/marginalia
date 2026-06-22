@@ -1,0 +1,39 @@
+USER
+    id (unique), 
+    name, 
+    email (unique), 
+    password, 
+    biography (optional), 
+    favorite book (optional), 
+    page p/ day avarage (dynamically), 
+    book p/ month avarage (dynamically)
+
+BOOK
+    id (unique), 
+    ISBN (unique), 
+    Title, Author, 
+    thumbnail, 
+    number of pages
+
+USER BOOK
+    id, 
+    user id, 
+    book id, 
+    status, 
+    Link to buy(optional), 
+    readed pages, 
+    progress percentage (dynamically), 
+    personal rate, 
+    personal opinion, 
+    start date, 
+    finished date
+
+STACK:
+    Node + Express
+    PostgreSQL + Primas ORM
+    Docker + Redis
+    React + Vite + TailWind
+
+[] JWT
+[] 2FA
+[] FORGET PASSWORD
