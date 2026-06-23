@@ -1,10 +1,11 @@
 class UserService{
     async store(data){
-        return {
-            success: true,
-            data
+        for(const key in data){
+            if(data[key] === null || data[key] === "" || data[key] === undefined) return {
+                success
+            }
         }
     }
 }
 
-module.exports = UserService
+module.exports = new UserService()
