@@ -31,6 +31,8 @@ model Book {
   createdAt     DateTime @default(now()) @map("created_at")
 
   userBooks UserBook[]
+
+  @@map("books")
 }
 
 model UserBook {

@@ -1,14 +1,14 @@
-require('dotenv').config()
-
+const dotenv = require('dotenv')
 const pg = require('pg')
 const { PrismaPg } = require('@prisma/adapter-pg')
 const { PrismaClient } = require('@prisma/client')
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL })
-
-const adapter = new PrismaPg(pool)
+dotenv.config()
 
 const prismaClientSingleton = () => {
+  const pool = new pg.Pool({ connectionString: process.env.DB_URL })
+  const adapter = new PrismaPg(pool)
+
   return new PrismaClient({ adapter: adapter })
 };
 
