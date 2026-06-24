@@ -6,32 +6,27 @@ const bcrypt = require('bcrypt')
 class UserService{
     async store(data){
         try{
-            const { name, email, password } = data
             const errors = schemaValidator(data, userSchemaValidator)
 
             if(Object.keys(errors).length > 0) return {
                 success: false,
-                error: "UNPROCESSABLE_CONTENT",
+                error: 'VALIDATION_ERROR',
                 labels: errors
             }
 
-            const userExists = await prisma.user.findUnique({where: {email}})
-
-            if(userExists) return {
-                success: false,
-                error: "USER_ALREADY_EXISTS",
-                labels: "E-mail already in use."
-            }
+            const { name, email, password } = data
+            const trimmedEmail = email.trim().toLowerCase()
 
             const hashedPassword = await bcrypt.hash(password, 10)
 
             const user = await prisma.user.create({
                 data: {
                     name,
-                    email,
+                    email: trimmedEmail,
                     password: hashedPassword
                 },
                 select: {
+                    id: true,
                     name: true,
                     email: true
                 }
@@ -42,9 +37,15 @@ class UserService{
                 user
             }
         }catch(error){
+            if(error.code === "P2002") return {
+                success: false,
+                error: 'USER_ALREADY_EXISTS'
+            }
+
+            console.error(error)
             return {
                 success: false,
-                error
+                error: 'INTERNAL_SERVER_ERROR'
             }
         }
     }
