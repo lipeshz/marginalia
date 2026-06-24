@@ -1,54 +1,65 @@
 const schemaValidator = require('../utils/schema.validator')
 const userSchemaValidator = require('../utils/user.schema.validator')
-const { prisma } = require('../config/db')
 const bcrypt = require('bcrypt')
 
 class UserService{
+    constructor(userRepository){
+        this.userRepository = userRepository
+    }
+
     async store(data){
         try{
+            if(!data) return {
+                success:    false,
+                error:      'UNPROCESSABLE_CONTENT',
+                labels:     { data: 'No data provide.' }
+            }
+
             const errors = schemaValidator(data, userSchemaValidator)
 
             if(Object.keys(errors).length > 0) return {
-                success: false,
-                error: 'VALIDATION_ERROR',
-                labels: errors
+                success:    false,
+                error:      'UNPROCESSABLE_CONTENT',
+                labels:     errors
             }
 
             const { name, email, password } = data
+            const trimmedName = name.trim()
             const trimmedEmail = email.trim().toLowerCase()
 
-            const hashedPassword = await bcrypt.hash(password, 10)
-
-            const user = await prisma.user.create({
-                data: {
-                    name,
-                    email: trimmedEmail,
-                    password: hashedPassword
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    email: true
+            const userExists = await this.userRepository.findByEmail(trimmedEmail)
+                if(userExists) return {
+                    success: false,
+                    error: 'USER_ALREADY_EXISTS'
                 }
-            })
+
+            const hashedPassword = await bcrypt.hash(password, 12)
+
+            const user = await this.userRepository.create({trimmedName, trimmedEmail, hashedPassword})
 
             return {
                 success: true,
                 user
             }
+
         }catch(error){
-            if(error.code === "P2002") return {
+            console.error(error)
+
+            if(error?.code === 'P2002') return {
                 success: false,
                 error: 'USER_ALREADY_EXISTS'
             }
 
-            console.error(error)
             return {
                 success: false,
                 error: 'INTERNAL_SERVER_ERROR'
             }
         }
     }
+
+    async index(){
+
+    }
 }
 
-module.exports = new UserService()
+module.exports = UserService
