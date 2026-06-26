@@ -1,6 +1,4 @@
-const nameHasSpecialChar = /[^a-zA-Z0-9]/
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,}$/;
+
 
 const userSchemaValidator = {
     name: [

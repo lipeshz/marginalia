@@ -38,3 +38,14 @@ STACK:
 [] JWT
 [] 2FA
 [] FORGET PASSWORD
+
+- Layered Architecture
+- DTO (Data Transfer Object)
+- Factory Pattern
+- Dependency Injection
+- Repository Pattern
+- Singleton Pattern
+- CQRS
+- Strategy Pattern
+- Builder Pattern
+- Mapper Pattern

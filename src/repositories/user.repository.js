@@ -2,16 +2,20 @@ const { prisma } = require('../config/db')
 
 class userRepository{
     async findByEmail(email){
-        return prisma.user.findUnique({where: {email}})
+        return prisma.user.findUnique({where: {email}, select: { email: true }})
+    }
+
+    async loginAttempt(email){
+        return prisma.user.findUnique({where: {email}, select: { email: true, password: true, role: true }})
     }
 
     async create(data){
-        const { trimmedName, trimmedEmail, hashedPassword } = data
+        const { name, email, password } = data
         return prisma.user.create({
             data: {
-                name: trimmedName,
-                email: trimmedEmail,
-                password: hashedPassword
+                name,
+                email,
+                password
             },
             select: {
                 id: true,
@@ -19,6 +23,10 @@ class userRepository{
                 email: true
             }
         }) 
+    }
+
+    async index(filter){
+        return prisma.user.findMany({ where: { OR: [filter] }, select: { id: true, name: true }})
     }
 }
 
